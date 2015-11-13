@@ -35,5 +35,6 @@
         android:layout_height="match_parent"
         android:textColor="#fff"
         android:layout_weight="1"
+
         />
 </RelativeLayout>

@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".BluetoothChat"
-            android:label="oi">
+            android:label="Chat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

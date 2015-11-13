@@ -20,9 +20,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.project.estevao.chatbluetooth.entities.DataMessage;
 
 /**
  * Created by c1284520 on 12/11/2015.
@@ -30,9 +33,11 @@ import android.widget.Toast;
 public class BluetoothChat extends AppCompatActivity {
     // Debugging
     private static final String TAG = "BluetoothChat";
+    private final String read = "READ";
+    private final String write = "WRITE";
     private static final boolean D = true;
 
-    // Message types sent from the BluetoothChatService Handler
+    // DataMessage types sent from the BluetoothChatService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
@@ -51,18 +56,20 @@ public class BluetoothChat extends AppCompatActivity {
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
-    private Button mSendButton;
+    private ImageView mSendButton;
 
     // Name of the connected device
     private String mConnectedDeviceName = null;
     // Array adapter for the conversation thread
-    private ArrayAdapter<String> mConversationArrayAdapter;
+    private ChatAdapter mConversationArrayAdapter;
     // String buffer for outgoing messages
     private StringBuffer mOutStringBuffer;
     // Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
     // Member object for the chat services
     private BluetoothChatService mChatService = null;
+
+    TextView text;
 
 
     @Override
@@ -121,16 +128,17 @@ public class BluetoothChat extends AppCompatActivity {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(this, R.layout.message);
         mConversationView = (ListView) findViewById(R.id.in);
+        mConversationArrayAdapter = new ChatAdapter(BluetoothChat.this);
         mConversationView.setAdapter(mConversationArrayAdapter);
+        text = (TextView) mConversationView.findViewById(R.id.textMessage);
 
         // Initialize the compose field with a listener for the return key
         mOutEditText = (EditText) findViewById(R.id.edit_text_out);
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
         // Initialize the send button with a listener that for click events
-        mSendButton = (Button) findViewById(R.id.button_send);
+        mSendButton = (ImageView) findViewById(R.id.button_send);
         mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Send a message using content of the edit text widget
@@ -229,13 +237,14 @@ public class BluetoothChat extends AppCompatActivity {
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            ChatAdapter adapter;
             switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:
                     if (D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothChatService.STATE_CONNECTED:
                             setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            mConversationArrayAdapter.clear();
+                            //mConversationArrayAdapter.clear();
                             break;
                         case BluetoothChatService.STATE_CONNECTING:
                             setStatus(R.string.title_connecting);
@@ -250,13 +259,23 @@ public class BluetoothChat extends AppCompatActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    DataMessage dataMessageWrite = new DataMessage();
+                    dataMessageWrite.setType(write);
+                    dataMessageWrite.setTxt(writeMessage);
+                    dataMessageWrite.setNameUser("Me");
+                    mConversationArrayAdapter.add(dataMessageWrite);
+                    mConversationArrayAdapter.notifyDataSetChanged();
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    DataMessage dataMessageRead = new DataMessage();
+                    dataMessageRead.setType(read);
+                    dataMessageRead.setNameUser(mConnectedDeviceName);
+                    dataMessageRead.setTxt(readMessage);
+                    mConversationArrayAdapter.add(dataMessageRead);
+                    mConversationArrayAdapter.notifyDataSetChanged();
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name

@@ -1,14 +1,16 @@
 package com.project.estevao.chatbluetooth;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -16,9 +18,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -26,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.project.estevao.chatbluetooth.entities.DataMessage;
+
+import java.util.Date;
 
 /**
  * Created by c1284520 on 12/11/2015.
@@ -69,7 +73,9 @@ public class BluetoothChat extends AppCompatActivity {
     // Member object for the chat services
     private BluetoothChatService mChatService = null;
 
-    TextView text;
+    private ImageView buttonIcons;
+
+    private TextView text;
 
 
     @Override
@@ -136,11 +142,38 @@ public class BluetoothChat extends AppCompatActivity {
         // Initialize the compose field with a listener for the return key
         mOutEditText = (EditText) findViewById(R.id.edit_text_out);
         mOutEditText.setOnEditorActionListener(mWriteListener);
+        mOutEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                sendMessage("true123456879");
+            }
+        });
+
+        //initialize the icon button
+        buttonIcons = (ImageView) findViewById(R.id.iconShow);
+        buttonIcons.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonIcons.startAnimation(AnimationUtils.loadAnimation(BluetoothChat.this, R.anim.click));
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+            }
+        });
         // Initialize the send button with a listener that for click events
         mSendButton = (ImageView) findViewById(R.id.button_send);
         mSendButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                mSendButton.startAnimation(AnimationUtils.loadAnimation(BluetoothChat.this, R.anim.click));
                 // Send a message using content of the edit text widget
                 TextView view = (TextView) findViewById(R.id.edit_text_out);
                 String message = view.getText().toString();
@@ -153,6 +186,7 @@ public class BluetoothChat extends AppCompatActivity {
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
+
     }
 
     @Override
@@ -250,6 +284,7 @@ public class BluetoothChat extends AppCompatActivity {
                             setStatus(R.string.title_connecting);
                             break;
                         case BluetoothChatService.STATE_LISTEN:
+                            setStatus("escrevendo");
                         case BluetoothChatService.STATE_NONE:
                             setStatus(R.string.title_not_connected);
                             break;
@@ -263,6 +298,7 @@ public class BluetoothChat extends AppCompatActivity {
                     dataMessageWrite.setType(write);
                     dataMessageWrite.setTxt(writeMessage);
                     dataMessageWrite.setNameUser("Me");
+                    dataMessageWrite.setTime(new Date().getTime());
                     mConversationArrayAdapter.add(dataMessageWrite);
                     mConversationArrayAdapter.notifyDataSetChanged();
                     break;
@@ -274,6 +310,7 @@ public class BluetoothChat extends AppCompatActivity {
                     dataMessageRead.setType(read);
                     dataMessageRead.setNameUser(mConnectedDeviceName);
                     dataMessageRead.setTxt(readMessage);
+                    dataMessageRead.setTime(new Date().getTime());
                     mConversationArrayAdapter.add(dataMessageRead);
                     mConversationArrayAdapter.notifyDataSetChanged();
                     break;

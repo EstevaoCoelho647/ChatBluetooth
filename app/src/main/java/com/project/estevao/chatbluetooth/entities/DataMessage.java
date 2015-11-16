@@ -5,9 +5,11 @@ package com.project.estevao.chatbluetooth.entities;
  */
 public class DataMessage {
 
-    String txt;
-    String type;
+    private String txt;
+    private String type;
     private String nameUser;
+    private Long time;
+
 
     public DataMessage() {
     }
@@ -15,14 +17,13 @@ public class DataMessage {
     public boolean isType() {
         if (type.equals("WRITE")) {
             return false;  //se for escrita -- enviando mensagem
-        }
-        else
+        } else
             return true;    //se estiver recebendo
 
-        }
+    }
 
     public void setType(String type) {
-            this.type = type;
+        this.type = type;
     }
 
     public String getTxt() {
@@ -44,5 +45,14 @@ public class DataMessage {
     public String getNameUser() {
         return nameUser;
     }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
 }
 

@@ -17,23 +17,37 @@
             android:id="@+id/layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/textName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="8sp" />
 
-        <TextView
+            <TextView
+                android:id="@+id/textName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textSize="8sp" />
 
-            android:id="@+id/textMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="18sp"
-            android:layout_below="@+id/textName"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/textMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textName"
+                android:autoText="false"
+                android:padding="5dp"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/textTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="8sp"
+                android:layout_toRightOf="@+id/textMessage"
+                android:layout_alignBottom="@+id/textMessage" />
+
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

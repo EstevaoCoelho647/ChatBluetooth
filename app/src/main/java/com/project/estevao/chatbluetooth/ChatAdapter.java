@@ -2,27 +2,18 @@ package com.project.estevao.chatbluetooth;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
-import android.text.Layout;
-import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.project.estevao.chatbluetooth.entities.DataMessage;
 
-import junit.framework.Test;
-
-import org.w3c.dom.Text;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +29,8 @@ public class ChatAdapter extends BaseAdapter {
     List<DataMessage> dataMessages;
     private Activity context;
     View viewMsg;
+    TextView textTyping;
+
 
     public ChatAdapter(Activity context) {
         this.context = context;
@@ -61,7 +54,8 @@ public class ChatAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-
+        int tipoTrue = 0;
+        int tipoFalse = 0;
         DataMessage dataMessage = getItem(i);
         String txt = dataMessage.getTxt();
 
@@ -70,31 +64,51 @@ public class ChatAdapter extends BaseAdapter {
         RelativeLayout layout = (RelativeLayout) viewMsg.findViewById(R.id.layout);
         TextView txtName = (TextView) viewMsg.findViewById(R.id.textName);
 
+        TextView time = (TextView) viewMsg.findViewById(R.id.textTime);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+
+        time.setText(simpleDateFormat.format(dataMessage.getTime()));
+        textTyping = (TextView) viewGroup.findViewById(R.id.typing);
+
         txtViewMensagem = (TextView) viewMsg.findViewById(R.id.textMessage);
         txtViewMensagem.setText(txt);
 
-        if (dataMessage.isType() == true){
-            layout.setBackgroundColor(Color.parseColor("#C5E1A5"));
-            txtName.setText(dataMessage.getNameUser());
-
+        if (dataMessage.getTxt().equals("true123456879")){
+            textTyping.setVisibility(View.VISIBLE);
         }
         else{
-            layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
-            txtName.setText(dataMessage.getNameUser());
-
+            textTyping.setVisibility(View.INVISIBLE);
         }
 
-
-
+        if (dataMessage.isType() == true) {
+            tipoTrue++;
+            tipoFalse = 0;
+            layout.setBackgroundColor(Color.parseColor("#C5E1A5"));
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardView.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            cardView.setLayoutParams(params);
+            txtName.setVisibility(View.GONE);
+            if (tipoTrue <= 1) {
+                txtName.setVisibility(View.VISIBLE);
+                txtName.setText(dataMessage.getNameUser());
+            }
+        } else {
+            tipoFalse++;
+            tipoTrue = 0;
+            layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardView.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            cardView.setLayoutParams(params);
+            txtName.setVisibility(View.GONE);
+            if (tipoFalse <= 1) {
+                txtName.setVisibility(View.VISIBLE);
+                txtName.setText(dataMessage.getNameUser());
+            }
+        }
         return viewMsg;
     }
-    public void add(DataMessage data) {
-        DataMessage dataMessage = new DataMessage();
-        dataMessage.setTxt(data.getTxt());
-        dataMessage.setType(data.getType());
-        dataMessage.setNameUser(data.getNameUser());
 
-        //add in array
-        dataMessages.add(dataMessage);
+    public void add(DataMessage data) {
+        dataMessages.add(data);
     }
 }

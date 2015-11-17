@@ -76,7 +76,7 @@ public class ChatAdapter extends BaseAdapter {
         time.setText(simpleDateFormat.format(dataMessage.getTime()));
 
         txtViewMensagem = (TextView) viewMsg.findViewById(R.id.textMessage);
-        txtViewMensagem.setText(txt);
+
 
 
         if (dataMessage.getType().equals("READ")) {
@@ -86,7 +86,7 @@ public class ChatAdapter extends BaseAdapter {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardView.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             cardView.setLayoutParams(params);
-            txtName.setVisibility(View.GONE);
+            txtViewMensagem.setText(txt);
             if (tipoTrue <= 1) {
                 txtName.setVisibility(View.VISIBLE);
                 txtName.setText(dataMessage.getNameUser());
@@ -98,6 +98,7 @@ public class ChatAdapter extends BaseAdapter {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardView.getLayoutParams();
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             cardView.setLayoutParams(params);
+            txtViewMensagem.setText(txt);
             txtName.setVisibility(View.GONE);
             if (tipoFalse <= 1) {
                 txtName.setVisibility(View.VISIBLE);
@@ -112,7 +113,10 @@ public class ChatAdapter extends BaseAdapter {
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             cardView.setLayoutParams(params);
             txtName.setVisibility(View.GONE);
-            image.setImageBitmap(StringToBitMap(dataMessage.getTxt()));
+            image.setVisibility(View.VISIBLE);
+            String string = dataMessage.getTxt();
+            //string = (string.replace("*IMAGE*",""));
+            image.setImageBitmap(StringToBitMap(string));
 
             if (tipoFalse <= 1) {
                 txtName.setVisibility(View.VISIBLE);
@@ -124,9 +128,14 @@ public class ChatAdapter extends BaseAdapter {
     }
 
     public Bitmap StringToBitMap(String encodedString) {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        try {
+            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
             return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
     public void add(DataMessage data) {
         dataMessages.add(data);

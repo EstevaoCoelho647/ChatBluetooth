@@ -5,12 +5,15 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 
 import com.project.estevao.chatbluetooth.entities.DataMessage;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
 /**
@@ -37,6 +41,7 @@ import java.util.Date;
 public class BluetoothChat extends AppCompatActivity {
     // Debugging
     private static final String TAG = "BluetoothChat";
+    private static final int CAMERA_REQUEST = 1888;
     private final String read = "READ";
     private final String write = "WRITE";
     private static final boolean D = true;
@@ -142,22 +147,6 @@ public class BluetoothChat extends AppCompatActivity {
         // Initialize the compose field with a listener for the return key
         mOutEditText = (EditText) findViewById(R.id.edit_text_out);
         mOutEditText.setOnEditorActionListener(mWriteListener);
-        mOutEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                sendMessage("true123456879");
-            }
-        });
 
         //initialize the icon button
         buttonIcons = (ImageView) findViewById(R.id.iconShow);
@@ -166,7 +155,7 @@ public class BluetoothChat extends AppCompatActivity {
             public void onClick(View view) {
                 buttonIcons.startAnimation(AnimationUtils.loadAnimation(BluetoothChat.this, R.anim.click));
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
         // Initialize the send button with a listener that for click events
@@ -284,7 +273,6 @@ public class BluetoothChat extends AppCompatActivity {
                             setStatus(R.string.title_connecting);
                             break;
                         case BluetoothChatService.STATE_LISTEN:
-                            setStatus("escrevendo");
                         case BluetoothChatService.STATE_NONE:
                             setStatus(R.string.title_not_connected);
                             break;
@@ -295,7 +283,12 @@ public class BluetoothChat extends AppCompatActivity {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     DataMessage dataMessageWrite = new DataMessage();
-                    dataMessageWrite.setType(write);
+                    if (writeMessage.startsWith("*IMAGE*")){
+                       writeMessage =  writeMessage.replace("*IMAGE*","");
+                        dataMessageWrite.setType(write + "image");
+                    }
+                    else
+                        dataMessageWrite.setType(write);
                     dataMessageWrite.setTxt(writeMessage);
                     dataMessageWrite.setNameUser("Me");
                     dataMessageWrite.setTime(new Date().getTime());
@@ -307,7 +300,12 @@ public class BluetoothChat extends AppCompatActivity {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     DataMessage dataMessageRead = new DataMessage();
-                    dataMessageRead.setType(read);
+                    if (readMessage.startsWith("*IMAGE*")){
+                        readMessage.replace("*IMAGE*","");
+                        dataMessageRead.setType(read + "image");
+                    }
+                    else
+                        dataMessageRead.setType(read);
                     dataMessageRead.setNameUser(mConnectedDeviceName);
                     dataMessageRead.setTxt(readMessage);
                     dataMessageRead.setTime(new Date().getTime());
@@ -355,6 +353,11 @@ public class BluetoothChat extends AppCompatActivity {
                     finish();
                 }
         }
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            String photoS = bitMapToString(photo);
+            sendMessage("*IMAGE*"+photoS);
+        }
     }
 
     private void connectDevice(Intent data, boolean secure) {
@@ -392,8 +395,22 @@ public class BluetoothChat extends AppCompatActivity {
                 // Ensure this device is discoverable by others
                 ensureDiscoverable();
                 return true;
+            case R.id.sendImage:
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                return true;
         }
         return false;
     }
+
+
+    private String bitMapToString(Bitmap photo) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
 
 }

@@ -17,16 +17,22 @@
     <item
         android:id="@+id/secure_connect_scan"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="always"
         android:title="@string/secure_connect" />
     <item
         android:id="@+id/insecure_connect_scan"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="always"
         android:title="@string/insecure_connect" />
     <item
         android:id="@+id/discoverable"
         android:icon="@android:drawable/ic_menu_mylocation"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="always"
         android:title="@string/discoverable" />
+
+    <item
+        android:id="@+id/sendImage"
+        app:showAsAction="never"
+        android:title="Tira Foto" />
+
 </menu>

@@ -2,11 +2,15 @@ package com.project.estevao.chatbluetooth;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -64,23 +68,18 @@ public class ChatAdapter extends BaseAdapter {
         RelativeLayout layout = (RelativeLayout) viewMsg.findViewById(R.id.layout);
         TextView txtName = (TextView) viewMsg.findViewById(R.id.textName);
 
+        ImageView image = (ImageView) viewMsg.findViewById(R.id.textImageMessage);
+
         TextView time = (TextView) viewMsg.findViewById(R.id.textTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
 
         time.setText(simpleDateFormat.format(dataMessage.getTime()));
-        textTyping = (TextView) viewGroup.findViewById(R.id.typing);
 
         txtViewMensagem = (TextView) viewMsg.findViewById(R.id.textMessage);
         txtViewMensagem.setText(txt);
 
-        if (dataMessage.getTxt().equals("true123456879")){
-            textTyping.setVisibility(View.VISIBLE);
-        }
-        else{
-            textTyping.setVisibility(View.INVISIBLE);
-        }
 
-        if (dataMessage.isType() == true) {
+        if (dataMessage.getType().equals("READ")) {
             tipoTrue++;
             tipoFalse = 0;
             layout.setBackgroundColor(Color.parseColor("#C5E1A5"));
@@ -92,7 +91,7 @@ public class ChatAdapter extends BaseAdapter {
                 txtName.setVisibility(View.VISIBLE);
                 txtName.setText(dataMessage.getNameUser());
             }
-        } else {
+        } else if (dataMessage.getType().equals("WRITE")){
             tipoFalse++;
             tipoTrue = 0;
             layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
@@ -105,9 +104,30 @@ public class ChatAdapter extends BaseAdapter {
                 txtName.setText(dataMessage.getNameUser());
             }
         }
+        else{
+            tipoFalse++;
+            tipoTrue = 0;
+            layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardView.getLayoutParams();
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            cardView.setLayoutParams(params);
+            txtName.setVisibility(View.GONE);
+            image.setImageBitmap(StringToBitMap(dataMessage.getTxt()));
+
+            if (tipoFalse <= 1) {
+                txtName.setVisibility(View.VISIBLE);
+                txtName.setText(dataMessage.getNameUser());
+            }
+        }
+
         return viewMsg;
     }
 
+    public Bitmap StringToBitMap(String encodedString) {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+    }
     public void add(DataMessage data) {
         dataMessages.add(data);
     }

@@ -14,14 +14,6 @@ public class DataMessage {
     public DataMessage() {
     }
 
-    public boolean isType() {
-        if (type.equals("WRITE")) {
-            return false;  //se for escrita -- enviando mensagem
-        } else
-            return true;    //se estiver recebendo
-
-    }
-
     public void setType(String type) {
         this.type = type;
     }

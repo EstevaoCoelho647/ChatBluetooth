@@ -284,7 +284,6 @@ public class BluetoothChat extends AppCompatActivity {
                     String writeMessage = new String(writeBuf);
                     DataMessage dataMessageWrite = new DataMessage();
                     if (writeMessage.startsWith("*IMAGE*")){
-                       writeMessage =  writeMessage.replace("*IMAGE*","");
                         dataMessageWrite.setType(write + "image");
                     }
                     else
@@ -301,7 +300,6 @@ public class BluetoothChat extends AppCompatActivity {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     DataMessage dataMessageRead = new DataMessage();
                     if (readMessage.startsWith("*IMAGE*")){
-                        readMessage.replace("*IMAGE*","");
                         dataMessageRead.setType(read + "image");
                     }
                     else

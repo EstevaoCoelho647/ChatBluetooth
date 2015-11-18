@@ -283,10 +283,9 @@ public class BluetoothChat extends AppCompatActivity {
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     DataMessage dataMessageWrite = new DataMessage();
-                    if (writeMessage.startsWith("*IMAGE*")){
+                    if (writeMessage.startsWith("*IMAGE*")) {
                         dataMessageWrite.setType(write + "image");
-                    }
-                    else
+                    } else
                         dataMessageWrite.setType(write);
                     dataMessageWrite.setTxt(writeMessage);
                     dataMessageWrite.setNameUser("Me");
@@ -297,18 +296,19 @@ public class BluetoothChat extends AppCompatActivity {
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf ,0, msg.arg1);
+                    String readMessage = new String(readBuf, 0, msg.arg1);
                     DataMessage dataMessageRead = new DataMessage();
-                    if (readMessage.startsWith("*IMAGE*")){
+                    if (readMessage.startsWith("*IMAGE*")) {
                         dataMessageRead.setType(read + "image");
-                    }
-                    else
+                    } else
                         dataMessageRead.setType(read);
                     dataMessageRead.setNameUser(mConnectedDeviceName);
                     dataMessageRead.setTxt(readMessage);
                     dataMessageRead.setTime(new Date().getTime());
+                    Helper.sendNotification(BluetoothChat.this, 10, mConnectedDeviceName, readMessage);
                     mConversationArrayAdapter.add(dataMessageRead);
                     mConversationArrayAdapter.notifyDataSetChanged();
+
                     break;
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -354,7 +354,7 @@ public class BluetoothChat extends AppCompatActivity {
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             String photoS = bitMapToString(photo);
-            sendMessage("*IMAGE*"+photoS);
+            sendMessage("*IMAGE*" + photoS);
         }
     }
 

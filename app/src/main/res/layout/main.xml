@@ -12,91 +12,111 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-android:id="@+id/id_background"
-android:background="#ffeaf4ff"
-android:backgroundTintMode="src_over"
-android:baselineAligned="true"
-android:clickable="false">
+        android:id="@+id/id_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffeaf4ff"
+        android:backgroundTintMode="src_over"
+        android:baselineAligned="true"
+        android:clickable="false"
+        android:orientation="vertical">
 
         <ListView
-    android:id="@+id/in"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:stackFromBottom="true"
-    android:divider="@null"
-    android:dividerHeight="0dp"
-    android:transcriptMode="alwaysScroll" />
+            android:id="@+id/in"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll" />
 
-        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:elevation="12dp"
-    card_view:cardCornerRadius="20dp"
-    card_view:cardElevation="4dp"
-    card_view:cardPreventCornerOverlap="false"
-    card_view:cardUseCompatPadding="true">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <ImageView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_smile"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/iconShow" />
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/edit_text_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:hint="Digite aqui..."
-            android:layout_alignBottom="@+id/button_send"
-            android:layout_toLeftOf="@+id/button_send"
-            android:layout_toRightOf="@+id/iconShow"
-            android:layout_toEndOf="@+id/iconShow"
-            android:layout_marginLeft="8dp" />
 
-        <ImageView
-            android:id="@+id/button_send"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_button_send"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp" />
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:elevation="12dp"
+                card_view:cardCornerRadius="4dp"
+                card_view:cardElevation="4dp"
+                card_view:cardPreventCornerOverlap="false"
+                card_view:cardUseCompatPadding="true">
 
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
 
+                    <ImageView
+                        android:id="@+id/iconShow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/ic_smile" />
+
+                    <EditText
+                        android:id="@+id/edit_text_out"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_toEndOf="@+id/iconShow"
+                        android:layout_toLeftOf="@+id/button_picture"
+                        android:layout_toRightOf="@+id/iconShow"
+                        android:hint="Digite aqui..." />
+
+
+                    <ImageView
+                        android:id="@+id/button_picture"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="12dp"
+                        android:src="@drawable/ic_picture" />
+
+
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <ImageView
+                android:id="@+id/button_send"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="7"
+
+                android:elevation="6dp"
+                android:padding="2dp"
+                android:src="@drawable/ic_button_send" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <TextView
+        android:id="@+id/typing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="is typing..."
         android:background="#54000000"
-        android:id="@+id/typing"
+        android:text="is typing..."
         android:visibility="invisible" />
 
 </RelativeLayout>

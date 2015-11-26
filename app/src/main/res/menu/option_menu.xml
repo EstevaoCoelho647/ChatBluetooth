@@ -26,9 +26,17 @@
         android:title="@string/insecure_connect" />
     <item
         android:id="@+id/discoverable"
-        android:icon="@android:drawable/ic_menu_mylocation"
+        android:icon="@drawable/ic_visibility"
         app:showAsAction="always"
         android:title="@string/discoverable" />
+
+    <item
+        android:id="@+id/ic_settings"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="always"
+        android:title="Configs">
+
+    </item>
 
     <item
         android:id="@+id/sendImage"

@@ -1,5 +1,6 @@
 package com.project.estevao.chatbluetooth;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,6 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -205,6 +211,7 @@ public class BluetoothChat extends AppCompatActivity {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
+
         }
     }
 
@@ -375,6 +382,7 @@ public class BluetoothChat extends AppCompatActivity {
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent serverIntent = null;
@@ -390,7 +398,7 @@ public class BluetoothChat extends AppCompatActivity {
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
                 return true;
             case R.id.discoverable:
-                // Ensure this device is discoverable by others
+                item.getIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.DST_IN);// Ensure this device is discoverable by others
                 ensureDiscoverable();
                 return true;
             case R.id.sendImage:

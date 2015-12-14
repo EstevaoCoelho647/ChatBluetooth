@@ -1,4 +1,4 @@
-package com.project.estevao.chatbluetooth;
+package com.project.estevao.chatbluetooth.controller.adapters;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.project.estevao.chatbluetooth.BluetoothHelper.PictureHelper;
+import com.project.estevao.chatbluetooth.R;
 import com.project.estevao.chatbluetooth.entities.DataMessage;
 
 import java.text.SimpleDateFormat;
@@ -78,7 +80,6 @@ public class ChatAdapter extends BaseAdapter {
         txtViewMensagem = (TextView) viewMsg.findViewById(R.id.textMessage);
 
 
-
         if (dataMessage.getType().equals("READ")) {
             tipoTrue++;
             tipoFalse = 0;
@@ -91,7 +92,7 @@ public class ChatAdapter extends BaseAdapter {
                 txtName.setVisibility(View.VISIBLE);
                 txtName.setText(dataMessage.getNameUser());
             }
-        } else if (dataMessage.getType().equals("WRITE")){
+        } else if (dataMessage.getType().equals("WRITE")) {
             tipoFalse++;
             tipoTrue = 0;
             layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
@@ -102,10 +103,8 @@ public class ChatAdapter extends BaseAdapter {
             txtName.setVisibility(View.GONE);
             if (tipoFalse <= 1) {
                 txtName.setVisibility(View.VISIBLE);
-                txtName.setText(dataMessage.getNameUser());
             }
-        }
-        else{
+        } else {
             tipoFalse++;
             tipoTrue = 0;
             layout.setBackgroundColor(Color.parseColor("#BBDEFB"));
@@ -114,29 +113,18 @@ public class ChatAdapter extends BaseAdapter {
             cardView.setLayoutParams(params);
             txtName.setVisibility(View.GONE);
             image.setVisibility(View.VISIBLE);
-            String string = dataMessage.getTxt();
-            //string = (string.replace("*IMAGE*",""));
-            image.setImageBitmap(StringToBitMap(string));
+            Bitmap photoUser = PictureHelper.getImage(dataMessage.getUser().getPhoto());
+            image.setImageBitmap(photoUser);
 
             if (tipoFalse <= 1) {
                 txtName.setVisibility(View.VISIBLE);
                 txtName.setText(dataMessage.getNameUser());
             }
         }
-
         return viewMsg;
     }
 
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
-            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch(Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
+
     public void add(DataMessage data) {
         dataMessages.add(data);
     }

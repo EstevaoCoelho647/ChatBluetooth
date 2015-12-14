@@ -1,23 +1,28 @@
-package com.project.estevao.chatbluetooth;
+package com.project.estevao.chatbluetooth.controller.activities;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.project.estevao.chatbluetooth.R;
 
 import java.util.Set;
 
@@ -25,6 +30,7 @@ public class DeviceListActivity extends AppCompatActivity {
     // Debugging
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
+    private Toolbar toolbar;
 
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
@@ -33,6 +39,8 @@ public class DeviceListActivity extends AppCompatActivity {
     private BluetoothAdapter mBtAdapter;
     private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
+    private static final int REQUEST_ENABLE_BT = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,18 +49,15 @@ public class DeviceListActivity extends AppCompatActivity {
         // Setup the window
         //getWindow().requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar3);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
 
-        // Initialize the button to perform device discovery
-        Button scanButton = (Button) findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                doDiscovery();
-                v.setVisibility(View.GONE);
-            }
-        });
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
@@ -85,13 +90,49 @@ public class DeviceListActivity extends AppCompatActivity {
 
         // If there are paired devices, add each one to the ArrayAdapter
         if (pairedDevices.size() > 0) {
-            findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
                 mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
             mPairedDevicesArrayAdapter.add(noDevices);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // Initialize the button to perform device discovery
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                doDiscovery();
+                break;
+            case R.id.discoverable:
+                item.getIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.DST_IN);// Ensure this device is discoverable by others
+                ensureDiscoverable();
+                break;
+            case R.id.ic_settings:
+                Intent goToUserProfileActivity = new Intent(DeviceListActivity.this,UserProfileActivity.class);
+                startActivity(goToUserProfileActivity);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void ensureDiscoverable() {
+        if (D) Log.d(TAG, "ensure discoverable");
+
+
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+
         }
     }
 
@@ -138,15 +179,17 @@ public class DeviceListActivity extends AppCompatActivity {
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
+
 
             // Create the result Intent and include the MAC address
+            String address = info.substring(info.length() - 17);
             Intent intent = new Intent();
             intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK, intent);
             finish();
+
         }
     };
 

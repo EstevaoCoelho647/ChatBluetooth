@@ -1,15 +1,25 @@
 package com.project.estevao.chatbluetooth.entities;
 
+import java.io.Serializable;
+
 /**
  * Created by c1284520 on 13/11/2015.
  */
-public class DataMessage {
+public class DataMessage implements Serializable{
 
     private String txt;
     private String type;
     private String nameUser;
     private Long time;
+    private User user;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public DataMessage() {
     }

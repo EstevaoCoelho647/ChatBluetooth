@@ -8,20 +8,30 @@
 
     <application
         android:allowBackup="true"
+        android:name=".BluetoothManagerApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".BluetoothChat"
-            android:label="Chat">
+            android:name=".controller.activities.LoginActivity"
+            android:label="Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".DeviceListActivity"
-            android:label="Lista"></activity>
+            android:name=".controller.activities.BluetoothChatActivity"
+            android:label="">
+
+        </activity>
+        <activity
+            android:name=".controller.activities.DeviceListActivity"
+            android:label="Pessoas"></activity>
+
+        <activity
+            android:name=".controller.activities.UserProfileActivity"
+            android:label="User Profile"></activity>
     </application>
 
 </manifest>
